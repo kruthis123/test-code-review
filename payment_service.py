@@ -17,13 +17,10 @@ def checkout(
     """Charge a user and record the completed order."""
     receipt_id = gateway.charge(user_id, amount_cents)
 
-    try:
-        connection.execute(
-            "INSERT INTO orders (user_id, amount_cents, receipt_id) VALUES (?, ?, ?)",
-            (user_id, amount_cents, receipt_id),
-        )
-        connection.commit()
-    except sqlite3.Error:
-        return {"status": "paid", "receipt_id": receipt_id}
+    connection.execute(
+        "INSERT INTO orders (user_id, amount_cents, receipt_id) VALUES (?, ?, ?)",
+        (user_id, amount_cents, receipt_id),
+    )
+    connection.commit()
 
     return {"status": "paid", "receipt_id": receipt_id}
